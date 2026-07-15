@@ -21,6 +21,8 @@ SensorSampler.cs    → LHM background sampling
 
 Config priority: **CLI > config.yaml > defaults**.
 
+Firewall: `firewall.enabled` / `firewall.profile` — ensured on `--install` and at runtime start; removed on `--uninstall` with the service.
+
 ## Key paths
 
 | Path | Role |
@@ -71,6 +73,8 @@ Flat keys normalize `_` → `-` (YAML `sample_interval_ms` ↔ CLI `sample-inter
 | `scrape.timeout-margin` | `--scrape.timeout-margin` |
 | `debug.enabled` | `--debug.enabled` |
 | `collectors.enabled` | `--collectors.enabled` |
+| `firewall.enabled` | `--firewall.enabled` |
+| `firewall.profile` | `--firewall.profile` |
 
 Do **not** use `Environment.GetEnvironmentVariable` — always go through `AppConfig`.
 

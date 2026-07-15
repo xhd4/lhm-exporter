@@ -25,6 +25,7 @@ public static class CliParser
         "collector.lhm.enable-network",
         "collector.lhm.enable-controller",
         "collector.lhm.debug-metrics",
+        "firewall.enabled",
     };
 
     public static CliParseResult Parse(string[] args)
@@ -106,6 +107,8 @@ public static class CliParser
               --collector.lhm.sensor-allowlist REGEX
               --collector.lhm.sensor-denylist REGEX
               --collector.lhm.debug-metrics BOOL
+              --firewall.enabled BOOL
+              --firewall.profile NAME     domain, private, public, or any
 
             Flags accept --name=value or --name value. Boolean flags without value default to true.
             """);

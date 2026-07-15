@@ -15,6 +15,8 @@ public sealed class AppConfig
     public double ScrapeTimeoutMargin { get; init; } = 0.5;
     public bool DebugEnabled { get; init; } = false;
     public string CollectorsEnabled { get; init; } = "lhm";
+    public bool FirewallEnabled { get; init; } = true;
+    public string FirewallProfile { get; init; } = "any";
 
     public LhmCollectorConfig Lhm { get; init; } = new();
 
@@ -123,6 +125,11 @@ public sealed class AppConfig
             Web = new YamlWeb { ListenAddress = WebListenAddress },
             Scrape = new YamlScrape { TimeoutMargin = ScrapeTimeoutMargin },
             Debug = new YamlDebug { Enabled = DebugEnabled },
+            Firewall = new YamlFirewall
+            {
+                Enabled = FirewallEnabled,
+                Profile = FirewallProfile,
+            },
         };
 
         var serializer = new SerializerBuilder()
@@ -146,6 +153,8 @@ public sealed class AppConfig
             ["scrape.timeout-margin"] = ScrapeTimeoutMargin.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["debug.enabled"] = DebugEnabled.ToString().ToLowerInvariant(),
             ["collectors.enabled"] = CollectorsEnabled,
+            ["firewall.enabled"] = FirewallEnabled.ToString().ToLowerInvariant(),
+            ["firewall.profile"] = FirewallProfile,
             ["collector.lhm.sample-interval-ms"] = Lhm.SampleIntervalMs.ToString(),
             ["collector.lhm.enable-cpu"] = Lhm.EnableCpu.ToString().ToLowerInvariant(),
             ["collector.lhm.enable-gpu"] = Lhm.EnableGpu.ToString().ToLowerInvariant(),
@@ -177,6 +186,8 @@ public sealed class AppConfig
             ScrapeTimeoutMargin = GetDouble(values, "scrape.timeout-margin", defaults.ScrapeTimeoutMargin),
             DebugEnabled = GetBool(values, "debug.enabled", defaults.DebugEnabled),
             CollectorsEnabled = GetString(values, "collectors.enabled", defaults.CollectorsEnabled),
+            FirewallEnabled = GetBool(values, "firewall.enabled", defaults.FirewallEnabled),
+            FirewallProfile = NormalizeFirewallProfile(GetString(values, "firewall.profile", defaults.FirewallProfile)),
             Lhm = new LhmCollectorConfig
             {
                 SampleIntervalMs = GetInt(values, "collector.lhm.sample-interval-ms", lhmDefaults.SampleIntervalMs),
@@ -286,6 +297,7 @@ public sealed class AppConfig
         public YamlWeb? Web { get; set; }
         public YamlScrape? Scrape { get; set; }
         public YamlDebug? Debug { get; set; }
+        public YamlFirewall? Firewall { get; set; }
     }
 
     private sealed class YamlCollectors
@@ -339,5 +351,17 @@ public sealed class AppConfig
     private sealed class YamlDebug
     {
         public bool Enabled { get; set; }
+    }
+
+    private sealed class YamlFirewall
+    {
+        public bool Enabled { get; set; }
+        public string? Profile { get; set; }
+    }
+
+    private static string NormalizeFirewallProfile(string raw)
+    {
+        var p = raw.Trim().ToLowerInvariant();
+        return p is "domain" or "private" or "public" or "any" ? p : "any";
     }
 }

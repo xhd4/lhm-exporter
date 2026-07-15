@@ -42,7 +42,8 @@ public static class ServiceInstaller
             config = ConfigLoader.Load(AppPaths.InstallDirectory, new CliParseResult { ConfigFilePath = configDest });
 
         DeleteFirewallRulesByPrefix();
-        AddFirewallRule(fwRuleName, exeDest, port);
+        if (config.FirewallEnabled)
+            AddFirewallRule(fwRuleName, exeDest, port, config.FirewallProfile);
         CreateOrReplaceService(binPath);
         ConfigureServiceRecovery();
         RunSc($"start {AppPaths.ServiceName}");
@@ -123,14 +124,45 @@ public static class ServiceInstaller
         RunPowerShell(script, ignoreErrors: true);
     }
 
-    private static void AddFirewallRule(string ruleName, string exePath, int port)
+    public static void EnsureFirewall(AppConfig config, string programPath)
+    {
+        if (!config.FirewallEnabled)
+            return;
+
+        try
+        {
+            EnsureAdministrator();
+        }
+        catch
+        {
+            // Best-effort when running without elevation (console).
+            return;
+        }
+
+        var port = config.ListenPort;
+        var fwRuleName = $"{AppPaths.FirewallRulePrefix}{port})";
+        DeleteFirewallRulesByPrefix();
+        AddFirewallRule(fwRuleName, programPath, port, config.FirewallProfile);
+    }
+
+    private static void AddFirewallRule(string ruleName, string exePath, int port, string profile)
     {
         var name = ruleName.Replace("'", "''");
         var exe = exePath.Replace("'", "''");
+        var psProfile = MapFirewallProfile(profile);
         var script =
-            $"New-NetFirewallRule -DisplayName '{name}' -Direction Inbound -Action Allow -Enabled True -Program '{exe}' -Protocol TCP -LocalPort {port} -Profile Any | Out-Null";
+            $"New-NetFirewallRule -DisplayName '{name}' -Direction Inbound -Action Allow -Enabled True -Program '{exe}' -Protocol TCP -LocalPort {port} -Profile {psProfile} | Out-Null";
         RunPowerShell(script);
     }
+
+    private static string MapFirewallProfile(string profile) =>
+        profile.Trim().ToLowerInvariant() switch
+        {
+            "domain" => "Domain",
+            "private" => "Private",
+            "public" => "Public",
+            _ => "Any",
+        };
 
     private static void KillProcessIfRunning()
     {

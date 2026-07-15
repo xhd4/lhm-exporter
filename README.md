@@ -88,6 +88,10 @@ telemetry:
 
 web:
   listen-address: :9182
+
+firewall:
+  enabled: true
+  profile: any
 ```
 
 ### Global flags (windows_exporter-compatible)
@@ -102,6 +106,8 @@ web:
 | `--scrape.timeout-margin` | `0.5` | Reserved for future scrape timeout handling |
 | `--debug.enabled` | `false` | Debug mode |
 | `--collectors.enabled` | `lhm` | Enabled collectors (`lhm` or `[defaults]`) |
+| `--firewall.enabled` | `true` | Create/update inbound firewall rule |
+| `--firewall.profile` | `any` | `domain`, `private`, `public`, or `any` |
 
 ### Collector `lhm` flags
 

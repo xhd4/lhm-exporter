@@ -40,6 +40,9 @@ public static class Program
             Console.WriteLine($"[boot] exeDir={exeDir}");
             Console.WriteLine($"[boot] config={config.ConfigFilePath}");
 
+            var programPath = Environment.ProcessPath ?? Path.Combine(exeDir, "lhm-exporter.exe");
+            ServiceInstaller.EnsureFirewall(config, programPath);
+
             await WebAppHost.RunAsync(config, args);
             return 0;
         }

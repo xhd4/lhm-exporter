@@ -30,3 +30,7 @@ scrape:
 
 debug:
   enabled: false
+
+firewall:
+  enabled: true
+  profile: any
