@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <_BuildRoot Condition="'$(OS)' == 'Windows_NT'">$(TEMP)\lhm-exporter\</_BuildRoot>
+    <_BuildRoot Condition="'$(_BuildRoot)' == ''">/tmp/lhm-exporter/</_BuildRoot>
+    <BaseOutputPath>$(_BuildRoot)bin/$(MSBuildProjectName)/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(_BuildRoot)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

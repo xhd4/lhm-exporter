@@ -1,0 +1,32 @@
+collectors:
+  enabled: lhm
+
+collector:
+  lhm:
+    sample_interval_ms: 2000
+    enable_cpu: true
+    enable_gpu: true
+    enable_motherboard: true
+    enable_memory: true
+    enable_storage: true
+    enable_network: false
+    enable_controller: false
+    sensor_allowlist: ""
+    sensor_denylist: ""
+    debug_metrics: false
+
+log:
+  level: warn
+  file: C:\ProgramData\lhm-exporter\logs\exporter.log
+
+telemetry:
+  path: /metrics
+
+web:
+  listen-address: :9182
+
+scrape:
+  timeout-margin: 0.5
+
+debug:
+  enabled: false

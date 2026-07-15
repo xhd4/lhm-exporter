@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rid: [win-x64, win-arm64]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.rid }}
+        run: |
+          mkdir -p dist/${{ matrix.rid }}
+          docker build \
+            --target artifact \
+            --build-arg TARGETRID=${{ matrix.rid }} \
+            --build-arg CONFIG=Release \
+            --output type=local,dest=./dist/${{ matrix.rid }} \
+            .
+
+      - name: Stage artifact
+        run: cp dist/${{ matrix.rid }}/lhm-exporter.exe dist/lhm-exporter-${{ matrix.rid }}.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lhm-exporter-${{ matrix.rid }}
+          path: dist/lhm-exporter-${{ matrix.rid }}.exe
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

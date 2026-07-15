@@ -1,0 +1,36 @@
+# Build / publish
+/dist/
+/bin/
+/obj/
+**/bin/
+**/obj/
+/publish/
+/out/
+*.pdb
+*.cache
+
+# Local configuration (may contain secrets)
+config.yaml
+.env
+config.env
+
+# Logs and runtime
+/logs/
+*.log
+
+# IDE
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temp
+.tmp*
+*.tmp

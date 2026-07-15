@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+dist/
+logs/
+.git/
+.gitignore
+.env
+config.yaml
+*.log
+*.user
+*.suo
+*.cache
+*.pdb

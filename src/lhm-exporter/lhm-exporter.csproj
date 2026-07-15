@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>lhm-exporter</AssemblyName>
+    <Version>1.0.0</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <!-- Trimming often breaks ASP.NET hosting/reflection -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
+    <IsIISIntegrationSupported>false</IsIISIntegrationSupported>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Kestrel without Microsoft.NET.Sdk.Web -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
+  <!-- Remove publish artifacts that sometimes appear anyway -->
+  <Target Name="RemoveUnwantedPublishFiles" AfterTargets="Publish">
+    <ItemGroup>
+      <_Remove Include="$(PublishDir)web.config" />
+      <_Remove Include="$(PublishDir)aspnetcorev2_inprocess.dll" />
+      <_Remove Include="$(PublishDir)MonoPosixHelper.dll" />
+      <_Remove Include="$(PublishDir)libMonoPosixHelper.dll" />
+    </ItemGroup>
+    <Delete Files="@(_Remove)" />
+  </Target>
+
+</Project>
