@@ -25,7 +25,7 @@ Run **elevated** (Administrator):
 .\dist\win-x64\lhm-exporter.exe --install
 ```
 
-Installs to `%ProgramFiles%\lhm-exporter\`, creates `config.yaml` on first install, registers service `lhm-exporter`, and adds a firewall rule.
+Installs to `%ProgramFiles%\lhm-exporter\`, creates `./config.yaml` in the current directory if missing (then copies it into Program Files on first install), registers service `lhm-exporter`, and adds a firewall rule.
 
 Preview:
 

@@ -12,6 +12,7 @@ public static class ServiceInstaller
         var installDir = AppPaths.InstallDirectory;
         var exeDest = AppPaths.InstalledExecutable;
         var configDest = AppPaths.InstalledConfigFile;
+        var cwdConfig = Path.Combine(Directory.GetCurrentDirectory(), AppPaths.ConfigFileName);
         var logDir = AppPaths.DefaultLogDirectory;
         var port = config.ListenPort;
         var fwRuleName = $"{AppPaths.FirewallRulePrefix}{port})";
@@ -19,7 +20,8 @@ public static class ServiceInstaller
 
         PrintPlan("Install plan", dryRun, [
             $"Copy: {sourceExe} -> {exeDest}",
-            $"Config: {configDest} {(File.Exists(configDest) ? "(keep existing)" : "(create new)")}",
+            $"Config (cwd): {cwdConfig} {(File.Exists(cwdConfig) ? "(keep existing)" : "(create new)")}",
+            $"Config (install): {configDest} {(File.Exists(configDest) ? "(keep existing)" : "(copy from cwd)")}",
             $"Logs dir: {logDir}",
             $"Firewall: {fwRuleName}",
             $"Service: {AppPaths.ServiceName}",
@@ -36,8 +38,11 @@ public static class ServiceInstaller
         StopServiceIfExists();
         File.Copy(sourceExe, exeDest, overwrite: true);
 
+        if (!File.Exists(cwdConfig))
+            File.WriteAllText(cwdConfig, config.SerializeToYaml(), Encoding.UTF8);
+
         if (!File.Exists(configDest))
-            File.WriteAllText(configDest, config.SerializeToYaml(), Encoding.UTF8);
+            File.Copy(cwdConfig, configDest);
         else
             config = ConfigLoader.Load(AppPaths.InstallDirectory, new CliParseResult { ConfigFilePath = configDest });
 
