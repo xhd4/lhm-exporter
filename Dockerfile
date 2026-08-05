@@ -4,6 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 ARG TARGETRID=win-x64
 ARG CONFIG=Release
+ARG GIT_COMMIT=unknown
 
 WORKDIR /src
 
@@ -20,7 +21,8 @@ RUN --mount=type=cache,target=/root/.nuget/packages \
       -c ${CONFIG} \
       -r ${TARGETRID} \
       -o /out \
-      --no-restore
+      --no-restore \
+      -p:GitCommit=${GIT_COMMIT}
 
 FROM scratch AS artifact
 COPY --from=build /out/ /

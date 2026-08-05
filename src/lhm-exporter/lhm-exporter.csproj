@@ -5,6 +5,7 @@
     <AssemblyName>lhm-exporter</AssemblyName>
     <LibreHardwareMonitorLibVersion>0.9.6</LibreHardwareMonitorLibVersion>
     <Version>$(LibreHardwareMonitorLibVersion)</Version>
+    <GitCommit Condition="'$(GitCommit)' == ''">unknown</GitCommit>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Exe</OutputType>
@@ -20,6 +21,13 @@
     <IsIISIntegrationSupported>false</IsIISIntegrationSupported>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>GitCommit</_Parameter1>
+      <_Parameter2>$(GitCommit)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Kestrel without Microsoft.NET.Sdk.Web -->

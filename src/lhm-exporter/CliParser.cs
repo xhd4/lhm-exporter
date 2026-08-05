@@ -68,8 +68,9 @@ public static class CliParser
 
     public static void PrintHelp(TextWriter output)
     {
-        output.WriteLine("""
-            lhm-exporter - Prometheus exporter for LibreHardwareMonitor (Windows)
+        output.WriteLine($"""
+            lhm-exporter {GetVersion()}
+            Prometheus exporter for LibreHardwareMonitor (Windows).
             Configuration follows prometheus-community/windows_exporter conventions.
 
             Usage:
@@ -83,7 +84,7 @@ public static class CliParser
               --dry-run                   Preview install/uninstall without changes
               --config.file PATH          YAML config (default: ./config.yaml or installed path)
               --help, -h                  Show this help
-              --version                   Show version
+              --version                   Show version and git commit
               --print-config              Print resolved config.yaml and exit
 
             Global (windows_exporter-compatible):
@@ -117,9 +118,19 @@ public static class CliParser
     public static string GetVersion()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        return assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? assembly.GetName().Version?.ToString()
-            ?? "unknown";
+        var version = assembly.GetName().Version is { } v
+            ? $"{v.Major}.{v.Minor}.{v.Build}"
+            : assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                ?? "unknown";
+
+        var commit = assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+            .FirstOrDefault(a => a.Key == "GitCommit")
+            ?.Value;
+
+        if (string.IsNullOrWhiteSpace(commit) || commit == "unknown")
+            return version;
+
+        return $"{version} ({commit})";
     }
 
     private static void ParseOption(CliParseResult result, string arg, string[] args, ref int index)

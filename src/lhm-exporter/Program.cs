@@ -37,6 +37,7 @@ public static class Program
                 return ServiceInstaller.Install(config, cli.DryRun);
 
             config.Validate();
+            Console.WriteLine($"[boot] version={CliParser.GetVersion()}");
             Console.WriteLine($"[boot] exeDir={exeDir}");
             Console.WriteLine($"[boot] config={config.ConfigFilePath}");
 

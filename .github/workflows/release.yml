@@ -24,11 +24,14 @@ jobs:
 
       - name: Build ${{ matrix.rid }}
         run: |
+          set -euo pipefail
+          COMMIT="$(git rev-parse --short HEAD)"
           mkdir -p dist/${{ matrix.rid }}
           docker build \
             --target artifact \
             --build-arg TARGETRID=${{ matrix.rid }} \
             --build-arg CONFIG=Release \
+            --build-arg GIT_COMMIT="$COMMIT" \
             --output type=local,dest=./dist/${{ matrix.rid }} \
             .
 

@@ -3,6 +3,7 @@ SHELL := /bin/sh
 TARGETRID ?= win-x64
 DIST_DIR := dist/$(TARGETRID)
 CONFIG ?= Release
+GIT_COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 SERVICE_NAME ?= lhm-exporter
 SERVICE_NAME := $(strip $(SERVICE_NAME))
 SERVICE_EXE ?= lhm-exporter.exe
@@ -11,6 +12,7 @@ DOCKER_BUILD = docker build \
 	--target artifact \
 	--build-arg TARGETRID=$(TARGETRID) \
 	--build-arg CONFIG=$(CONFIG) \
+	--build-arg GIT_COMMIT=$(GIT_COMMIT) \
 	--output type=local,dest=./$(DIST_DIR) \
 	.
 
