@@ -6,6 +6,13 @@
     <LibreHardwareMonitorLibVersion>0.9.6</LibreHardwareMonitorLibVersion>
     <Version>$(LibreHardwareMonitorLibVersion)</Version>
     <GitCommit Condition="'$(GitCommit)' == ''">unknown</GitCommit>
+    <FileVersion>$(Version).0</FileVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <InformationalVersion Condition="'$(GitCommit)' != '' And '$(GitCommit)' != 'unknown'">$(Version) ($(GitCommit))</InformationalVersion>
+    <InformationalVersion Condition="'$(InformationalVersion)' == ''">$(Version)</InformationalVersion>
+    <Product>lhm-exporter</Product>
+    <AssemblyTitle>lhm-exporter</AssemblyTitle>
+    <Description>Prometheus exporter for LibreHardwareMonitor</Description>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Exe</OutputType>
