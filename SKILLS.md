@@ -93,4 +93,4 @@ Do **not** use `Environment.GetEnvironmentVariable` — always go through `AppCo
 
 ## Release
 
-Tag `v*` → GitHub Actions builds `lhm-exporter-win-x64.exe` and `lhm-exporter-win-arm64.exe`.
+Tag `v*` → GitHub Actions builds `lhm-exporter-amd64.exe` and `lhm-exporter-arm64.exe`.

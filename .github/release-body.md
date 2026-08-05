@@ -7,8 +7,8 @@ First release of **lhm-exporter** — a Windows Prometheus exporter for hardware
 - Sensor groups: CPU, GPU, motherboard, memory, storage, network, controller
 - Sensor allowlist / denylist regex filters
 - Endpoints: `/health`, `/version`, and configurable metrics path
-- Self-contained single-file binaries for **win-x64** and **win-arm64**
+- Self-contained single-file binaries for **amd64** and **arm64**
 
 ## Downloads
 
-Attach `lhm-exporter-win-x64.exe` and `lhm-exporter-win-arm64.exe` from this release. Run elevated for service install.
+Attach `lhm-exporter-amd64.exe` and `lhm-exporter-arm64.exe` from this release. Run elevated for service install.
