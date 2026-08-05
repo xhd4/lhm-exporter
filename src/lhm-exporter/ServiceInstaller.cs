@@ -111,8 +111,17 @@ public static class ServiceInstaller
 
     private static void CreateOrReplaceService(string binPath)
     {
-        var createArgs = $"create {AppPaths.ServiceName} binPath= \"{binPath}\" start= auto DisplayName= \"{AppPaths.DisplayName}\"";
-        RunSc(createArgs);
+        // sc requires "key= value" as separate argv tokens; ArgumentList escapes the ImagePath safely.
+        RunSc([
+            "create",
+            AppPaths.ServiceName,
+            "binPath=",
+            binPath,
+            "start=",
+            "auto",
+            "DisplayName=",
+            AppPaths.DisplayName,
+        ]);
         RunSc($"description {AppPaths.ServiceName} \"{AppPaths.ServiceDescription}\"", ignoreErrors: true);
     }
 
@@ -212,12 +221,37 @@ public static class ServiceInstaller
             CreateNoWindow = true,
         }) ?? throw new InvalidOperationException($"Failed to start sc.exe ({arguments})");
 
+        WaitSc(process, arguments, ignoreErrors);
+    }
+
+    private static void RunSc(IEnumerable<string> argumentList, bool ignoreErrors = false)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "sc.exe",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true,
+        };
+        foreach (var arg in argumentList)
+            startInfo.ArgumentList.Add(arg);
+
+        var display = string.Join(' ', argumentList);
+        using var process = Process.Start(startInfo)
+            ?? throw new InvalidOperationException($"Failed to start sc.exe ({display})");
+
+        WaitSc(process, display, ignoreErrors);
+    }
+
+    private static void WaitSc(Process process, string displayArgs, bool ignoreErrors)
+    {
         process.WaitForExit();
         var stdout = process.StandardOutput.ReadToEnd();
         var stderr = process.StandardError.ReadToEnd();
 
         if (process.ExitCode != 0 && !ignoreErrors)
-            throw new InvalidOperationException($"sc.exe {arguments} failed ({process.ExitCode}): {stderr}{stdout}");
+            throw new InvalidOperationException($"sc.exe {displayArgs} failed ({process.ExitCode}): {stderr}{stdout}");
     }
 
     private static void RunPowerShell(string script, bool ignoreErrors = false)
